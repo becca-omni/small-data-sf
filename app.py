@@ -98,7 +98,7 @@ def api_content():
     elif view == '4':
         return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/embed/external-embedding/setting-up-the-infrastructure'})
     elif view == '5':
-        return jsonify({'content': '<div class="blobbies-content"><h1>Blobby Repo</h1><p>Check out the amazing 400+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div>'})
+        return jsonify({'content': '<div class="blobbies-content"><h1>Blobby Repo</h1><p>Check out the amazing 200+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div>'})
     elif view == '6':
         return jsonify({'iframe': True, 'url': 'https://docs.google.com/presentation/d/160T_OU-vHXqBywDrxz7qwDhZ9F_l3ijxExqKyvp_tQc/edit?usp=sharing'})
     else:

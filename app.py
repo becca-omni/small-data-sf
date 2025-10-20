@@ -23,6 +23,14 @@ OMNIAPP_PARAMS_2 = {
     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
 }
 
+# OMNIAPP_PARAMS_3 = {
+#     "contentPath": "/chat",
+#     "externalId": "smalldatasf@omni.co",
+#     "name": "Small Data SF",
+#     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
+#     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
+# }
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_secret_key_here')  # Use env var for production
 
@@ -58,6 +66,10 @@ def dashboard():
         content = 'Sidebar Option 5 Content'
     elif view == '6':
         content = 'Sidebar Option 6 Content'
+    elif view == '7':
+        content = 'Sidebar Option 7 Content'
+    elif view == '8':
+        content = 'Sidebar Option 8 Content'
     # By default content = '' (blank div)
     return render_template('dashboard.html', content=content)
 
@@ -93,13 +105,28 @@ def api_content():
                 return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
         except Exception as e:
             return jsonify({'content': f'API request failed: {str(e)}'}), 500
-    elif view == '3':
-        return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/ai'})
+    # elif view == '3':
+    #     try:
+    #         resp = requests.post('https://becca.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_3)
+    #         if resp.ok:
+    #             data = resp.json()
+    #             if 'url' in data:
+    #                 return jsonify({'iframe': True, 'url': data['url']})
+    #             else:
+    #                 return jsonify({'content': 'No URL found in API response.'}), 502
+    #         else:
+    #             return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
+    #     except Exception as e:
+    #         return jsonify({'content': f'API request failed: {str(e)}'}), 500
     elif view == '4':
-        return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/embed/external-embedding/setting-up-the-infrastructure'})
+        return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/connections/database/motherduck'})
     elif view == '5':
-        return jsonify({'content': '<div class="blobbies-content"><h1>Blobby Repo</h1><p>Check out the amazing 200+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div>'})
+        return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/ai'}) 
     elif view == '6':
+         return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/embed/external-embedding/setting-up-the-infrastructure'})
+    elif view == '7':
+         return jsonify({'content': '<div class="blobbies-content"><h1>Blobby Repo</h1><p>Check out the amazing 200+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div>'})
+    elif view == '8':
         return jsonify({'iframe': True, 'url': 'https://docs.google.com/presentation/d/160T_OU-vHXqBywDrxz7qwDhZ9F_l3ijxExqKyvp_tQc/edit?usp=sharing'})
     else:
         return jsonify({'content': content_map.get(view, '')})

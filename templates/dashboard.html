@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - smalldatasf</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <header class="sdsf-header">
+        <div class="sdsf-logo-container"><img src="https://media3.giphy.com/media/8c14vDYQEMkx6zvLh1/source.gif" alt="logo" /></div>
+        small data sf
+    </header>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <li><a href="#" data-view="1">Yelp Business Data Demo</a></li>
+                    <li><a href="#" data-view="2">NYC Taxi Data Demo</a></li>
+                    <li><a href="#" data-view="3">AI Documentation</a></li>
+                    <li><a href="#" data-view="4">Embed Documentation</a></li>
+                    <li><a href="#" data-view="5">Blobby Github Repo</a></li>
+                    <li><a href="#" data-view="6">Slides</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="content-area" style="display: flex; flex-direction: column; height: 100%;">
+            <div id="content-area" style="flex: 1; display: flex; flex-direction: column;"></div>
+        </main>
+    </div>
+    <script>
+    function setActiveLink(view) {
+        document.querySelectorAll('.sidebar a').forEach(a => {
+            a.classList.toggle('active', a.dataset.view === view);
+        });
+    }
+    function loadContent(view) {
+        fetch(`/api/content?view=${view}`)
+            .then(res => {
+                if(!res.ok) throw new Error('No data');
+                return res.json()
+            })
+            .then(data => {
+                const area = document.getElementById('content-area');
+                area.innerHTML = '';
+                if (data.iframe && data.url) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = data.url;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.minHeight = '400px';
+                    iframe.style.flex = '1';
+                    iframe.style.border = '1.5px solid #eee';
+                    iframe.style.borderRadius = '12px';
+                    iframe.style.background = '#fff';
+                    area.style.flex = '1';
+                    area.style.display = 'flex';
+                    area.style.flexDirection = 'column';
+                    area.appendChild(iframe);
+                } else {
+                    area.innerHTML = data.content || '';
+                    area.style.display = '';
+                }
+                setActiveLink(view);
+            })
+            .catch(e => {
+                document.getElementById('content-area').textContent = 'Loading error.';
+            });
+    }
+    document.querySelectorAll('.sidebar a').forEach(a => {
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            loadContent(this.dataset.view);
+        });
+    });
+    // Load first on startup (optional: default to 1)
+    window.onload = function() {
+        loadContent('1');
+    };
+    </script>
+</body>
+</html>

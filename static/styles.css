@@ -230,6 +230,48 @@ body {
     box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
+.repo-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.repo-item {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.repo-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.repo-item h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.repo-item p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    flex-grow: 1;
+}
+
 .error-content {
     padding: 2rem;
     background: linear-gradient(135deg, #FF4473 0%, #F357A8 100%);
@@ -320,5 +362,14 @@ body {
     }
     .blobbies-content p {
         font-size: 1.1rem;
+    }
+    .repo-item {
+        padding: 1rem;
+    }
+    .repo-item h2 {
+        font-size: 1.5rem;
+    }
+    .repo-item p {
+        font-size: 1rem;
     }
 }

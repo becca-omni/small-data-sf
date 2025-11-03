@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import requests
 import os
+import json
 from dotenv import load_dotenv
 
 # Load environment variables from .env file for local development
 load_dotenv()
+
+# Connection ID for connectionRoles
+CONNECTION_ID = os.environ.get("OMNI_CONNECTION_ID", "66d0e61f-d910-4fa4-80b6-f52a0fa798d0")
 
 # Configurable placeholder params for OmniApp API
 OMNIAPP_PARAMS_1 = {
@@ -12,6 +16,8 @@ OMNIAPP_PARAMS_1 = {
     "externalId": "smalldatasf@omni.co",
     "name": "Small Data SF",
     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
+    "customThemeId": "97216b2d-0970-4582-aaa6-aa66f082cfe9",
+    "connectionRoles": json.dumps({CONNECTION_ID: "RESTRICTED_QUERIER"}),
     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
 }
 
@@ -20,6 +26,8 @@ OMNIAPP_PARAMS_2 = {
     "externalId": "smalldatasf@omni.co",
     "name": "Small Data SF",
     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
+    "customThemeId": "8e2a99c1-89e9-428e-8a8c-436e1e22cf06",
+    "connectionRoles": json.dumps({CONNECTION_ID: "RESTRICTED_QUERIER"}),
     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
 }
 
@@ -28,6 +36,7 @@ OMNIAPP_PARAMS_3 = {
     "externalId": "smalldatasf@omni.co",
     "name": "Small Data SF",
     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
+    "connectionRoles": json.dumps({CONNECTION_ID: "RESTRICTED_QUERIER"}),
     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
 }
 
@@ -83,41 +92,50 @@ def api_content():
         try:
             resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_1)
             if resp.ok:
-                data = resp.json()
-                if 'url' in data:
-                    return jsonify({'iframe': True, 'url': data['url']})
-                else:
-                    return jsonify({'content': 'No URL found in API response.'}), 502
+                try:
+                    data = resp.json()
+                    if 'url' in data and isinstance(data['url'], str) and data['url'].startswith('http'):
+                        return jsonify({'iframe': True, 'url': data['url']})
+                    else:
+                        return jsonify({'content': ''}), 502
+                except (ValueError, KeyError):
+                    return jsonify({'content': ''}), 502
             else:
-                return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
-        except Exception as e:
-            return jsonify({'content': f'API request failed: {str(e)}'}), 500
+                return jsonify({'content': ''}), 502
+        except Exception:
+            return jsonify({'content': ''}), 500
     elif view == '2':
         try:
             resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_2)
             if resp.ok:
-                data = resp.json()
-                if 'url' in data:
-                    return jsonify({'iframe': True, 'url': data['url']})
-                else:
-                    return jsonify({'content': 'No URL found in API response.'}), 502
+                try:
+                    data = resp.json()
+                    if 'url' in data and isinstance(data['url'], str) and data['url'].startswith('http'):
+                        return jsonify({'iframe': True, 'url': data['url']})
+                    else:
+                        return jsonify({'content': ''}), 502
+                except (ValueError, KeyError):
+                    return jsonify({'content': ''}), 502
             else:
-                return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
-        except Exception as e:
-            return jsonify({'content': f'API request failed: {str(e)}'}), 500
+                return jsonify({'content': ''}), 502
+        except Exception:
+            return jsonify({'content': ''}), 500
     elif view == '3':
         try:
             resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_3)
             if resp.ok:
-                data = resp.json()
-                if 'url' in data:
-                    return jsonify({'iframe': True, 'url': data['url']})
-                else:
-                    return jsonify({'content': 'No URL found in API response.'}), 502
+                try:
+                    data = resp.json()
+                    if 'url' in data and isinstance(data['url'], str) and data['url'].startswith('http'):
+                        return jsonify({'iframe': True, 'url': data['url']})
+                    else:
+                        return jsonify({'content': ''}), 502
+                except (ValueError, KeyError):
+                    return jsonify({'content': ''}), 502
             else:
-                return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
-        except Exception as e:
-            return jsonify({'content': f'API request failed: {str(e)}'}), 500
+                return jsonify({'content': ''}), 502
+        except Exception:
+            return jsonify({'content': ''}), 500
     elif view == '4':
         return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/connections/database/motherduck'})
     elif view == '5':
@@ -125,11 +143,13 @@ def api_content():
     elif view == '6':
          return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/embed/external-embedding/setting-up-the-infrastructure'})
     elif view == '7':
-         return jsonify({'content': '<div class="blobbies-content"><h1>Blobby Repo</h1><p>Check out the amazing 200+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div>'})
+         return jsonify({'content': '<div class="blobbies-content"><h1>💻 GitHub Repositories</h1><div class="repo-links"><div class="repo-item"><h2>👋 All The Blobbies</h2><p>Check out the amazing 200+ Blobby project on GitHub!</p><a href="https://github.com/RichardCzechowski/all-the-blobbies/tree/main/blobbies-slack" target="_blank" class="blobbies-link">View Blobbies on GitHub →</a></div><div class="repo-item"><h2>🎨 Themes & Chart Palettes</h2><p>Repository containing Dashboard Themes and Chart Palettes</p><a href="https://github.com/becca-omni/themes-and-chart-palettes" target="_blank" class="blobbies-link">View Repo on GitHub →</a></div><div class="repo-item"><h2>🚀 Small Data SF</h2><p>Code used to deploy the app we\'re using for the session</p><a href="https://github.com/becca-omni/small-data-sf" target="_blank" class="blobbies-link">View Repo on GitHub →</a></div></div></div>'})
     elif view == '8':
         return jsonify({'iframe': True, 'url': 'https://docs.google.com/presentation/d/160T_OU-vHXqBywDrxz7qwDhZ9F_l3ijxExqKyvp_tQc/edit?usp=sharing'})
+    elif view == '9':
+        return jsonify({'iframe': True, 'url': 'https://forms.gle/jSvvndqZz9TqMpNs6'})
     else:
-        return jsonify({'content': content_map.get(view, '')})
+        return jsonify({'content': ''})
 
 @app.route('/logout')
 def logout():

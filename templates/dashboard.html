@@ -7,21 +7,22 @@
 </head>
 <body>
     <header class="sdsf-header">
-        <div class="sdsf-logo-container"><img src="https://media3.giphy.com/media/8c14vDYQEMkx6zvLh1/source.gif" alt="logo" /></div>
+        <div class="sdsf-logo-container"><img src="https://github.com/RichardCzechowski/all-the-blobbies/raw/main/blobbies-slack/blobby-wave-2.gif" alt="logo" /></div>
         small data sf
     </header>
     <div class="dashboard-container">
         <aside class="sidebar">
             <nav>
                 <ul>
-                    <li><a href="#" data-view="1">Yelp Business Data Demo</a></li>
-                    <li><a href="#" data-view="2">NYC Taxi Data Demo</a></li>
-                    <!-- <li><a href="#" data-view="3">AI Chat Demo</a></li> -->
+                    <li><a href="#" data-view="1">NYC 311</a></li>
+                    <li><a href="#" data-view="2">NYC Rideshare</a></li>
+                    <li><a href="#" data-view="3">AI Chat Demo</a></li>
                     <li><a href="#" data-view="4">Connect to Motherduck Documentation</a></li>
                     <li><a href="#" data-view="5">AI Documentation</a></li>
                     <li><a href="#" data-view="6">Embed Documentation</a></li>
-                    <li><a href="#" data-view="7">Blobby Github Repo</a></li>
+                    <li><a href="#" data-view="7">Github Repos</a></li>
                     <li><a href="#" data-view="8">Slides</a></li>
+                    <li><a href="#" data-view="9">Emails for Omni Accounts</a></li>
                 </ul>
             </nav>
         </aside>
@@ -65,7 +66,8 @@
                 setActiveLink(view);
             })
             .catch(e => {
-                document.getElementById('content-area').textContent = 'Loading error.';
+                // Silently handle errors
+                console.error('Error loading content:', e);
             });
     }
     document.querySelectorAll('.sidebar a').forEach(a => {

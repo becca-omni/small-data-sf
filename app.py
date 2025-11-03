@@ -8,7 +8,7 @@ load_dotenv()
 
 # Configurable placeholder params for OmniApp API
 OMNIAPP_PARAMS_1 = {
-    "contentPath": "/dashboards/small-data-sf-yelp",
+    "contentPath": "/dashboards/nyc-311",
     "externalId": "smalldatasf@omni.co",
     "name": "Small Data SF",
     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
@@ -16,20 +16,20 @@ OMNIAPP_PARAMS_1 = {
 }
 
 OMNIAPP_PARAMS_2 = {
-    "contentPath": "/dashboards/small-data-sf-nyc-taxi",
+    "contentPath": "/dashboards/nyc-rideshare",
     "externalId": "smalldatasf@omni.co",
     "name": "Small Data SF",
     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
 }
 
-# OMNIAPP_PARAMS_3 = {
-#     "contentPath": "/chat",
-#     "externalId": "smalldatasf@omni.co",
-#     "name": "Small Data SF",
-#     "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
-#     # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
-# }
+OMNIAPP_PARAMS_3 = {
+    "contentPath": "/chat",
+    "externalId": "smalldatasf@omni.co",
+    "name": "Small Data SF",
+    "secret": os.environ.get("OMNI_EMBED_SECRET", "your_omniapp_embed_secret_here"),  # Fallback for local dev
+    # "userAttributes": "%7B%22shop_id%22%3A%22123%22%7D",  # URL-encoded JSON: {"shop_id":"123"}
+}
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'your_secret_key_here')  # Use env var for production
@@ -81,7 +81,7 @@ def api_content():
 
     if view == '1':
         try:
-            resp = requests.post('https://becca.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_1)
+            resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_1)
             if resp.ok:
                 data = resp.json()
                 if 'url' in data:
@@ -94,7 +94,7 @@ def api_content():
             return jsonify({'content': f'API request failed: {str(e)}'}), 500
     elif view == '2':
         try:
-            resp = requests.post('https://becca.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_2)
+            resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_2)
             if resp.ok:
                 data = resp.json()
                 if 'url' in data:
@@ -105,19 +105,19 @@ def api_content():
                 return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
         except Exception as e:
             return jsonify({'content': f'API request failed: {str(e)}'}), 500
-    # elif view == '3':
-    #     try:
-    #         resp = requests.post('https://becca.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_3)
-    #         if resp.ok:
-    #             data = resp.json()
-    #             if 'url' in data:
-    #                 return jsonify({'iframe': True, 'url': data['url']})
-    #             else:
-    #                 return jsonify({'content': 'No URL found in API response.'}), 502
-    #         else:
-    #             return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
-    #     except Exception as e:
-    #         return jsonify({'content': f'API request failed: {str(e)}'}), 500
+    elif view == '3':
+        try:
+            resp = requests.post('https://becca-embed.omniapp.co/embed/sso/generate-url', json=OMNIAPP_PARAMS_3)
+            if resp.ok:
+                data = resp.json()
+                if 'url' in data:
+                    return jsonify({'iframe': True, 'url': data['url']})
+                else:
+                    return jsonify({'content': 'No URL found in API response.'}), 502
+            else:
+                return jsonify({'content': f'Error fetching content from external API. Status: {resp.status_code}'}), 502
+        except Exception as e:
+            return jsonify({'content': f'API request failed: {str(e)}'}), 500
     elif view == '4':
         return jsonify({'iframe': True, 'url': 'https://docs.omni.co/docs/connections/database/motherduck'})
     elif view == '5':
